@@ -7,6 +7,11 @@ document.getElementById('sendToAll').addEventListener('click', function () {
     socket.emit('sendToAll', (message));
 })
 
+document.getElementById('sendToMe').addEventListener('click', function () {
+    let message = document.getElementById('message').value;
+    socket.emit('sendToMe', (message));
+})
+
 socket.on('displayMessage', (message) => {
-    target.innerHTML = '<br>' + message;
+    target.innerHTML += '<br>' + message;
 })
