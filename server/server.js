@@ -23,16 +23,16 @@ server.listen(port, () => {
 // This runs when a client connects
 io.on('connection', (socket) => {
     counter++;
-    console.log(counter + ' someone connected');
+    console.log(counter + ' someone connected ' + socket.id);
 
     // Listen for a message to all connected clients
     socket.on('sendToAll', (data) => {
-        io.emit('displayMessage', (data));
+        io.emit('displayMessage', data);
     });
 
     // Message only to the originating client
     socket.on('sendToMe', (data) => {
-        socket.emit('displayMessage', (data));
+        socket.emit('displayMessage', data);
     });
 
     // Message to all clients except the originating client
@@ -41,5 +41,10 @@ io.on('connection', (socket) => {
     // Message when a client disconnects
     socket.on('disconnect', () => {
         io.emit('displayMessage', 'A user has left the room');
+    });
+
+    // Show when someone is typing
+    socket.on('typing', (data) => {
+        socket.broadcast.emit('typing', data);
     });
 });
