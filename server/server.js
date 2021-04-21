@@ -30,7 +30,7 @@ io.on('connection', (socket) => {
     // Listen for a message to all connected clients
     socket.on('sendToAll', (data) => {
         io.emit('displayMessage', data);
-        activeUsers(data.username);
+        activeUsers(data);
         io.emit('showUsers', users);
     });
 
@@ -40,11 +40,13 @@ io.on('connection', (socket) => {
     });
 
     // Message to all clients except the originating client
-    socket.broadcast.emit('displayMessage', 'A user has joined the room');
+    socket.broadcast.emit('joinMessage', 'A user has joined the room');
 
     // Message when a client disconnects
     socket.on('disconnect', () => {
-        io.emit('displayMessage', 'A user has left the room');
+        removeUser(socket.id);
+        io.emit('leaveMessage', 'A user has left the room');
+        io.emit('showUsers', users);
     });
 
     // Show when someone is typing
@@ -53,10 +55,21 @@ io.on('connection', (socket) => {
     });
 });
 
-function activeUsers(user) {
-    if (!users.includes(user)) {
-        users.push(user);
+function activeUsers(data) {
+    if (!users.includes(data.socketID)) {
+        users.push(data);
     }
     console.log(users);
 }
+
+function removeUser(socketID) {
+    users.forEach( (user) => {
+        if (user.socketID === socketID) {
+            delete users[user.socketID];
+        }
+    })
+    console.log(users);
+}
+
+
 

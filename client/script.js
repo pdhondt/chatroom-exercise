@@ -11,7 +11,8 @@ let displayUsers = document.getElementById('users');
 btnAll.addEventListener('click', function(){
     socket.emit('sendToAll', {
         username: user.value,
-        text: message.value
+        text: message.value,
+        socketID: socket.id
     });
     // Clear the input field and put focus onto the field
     message.value = '';
@@ -21,7 +22,8 @@ btnAll.addEventListener('click', function(){
 btnMe.addEventListener('click', function(){
     socket.emit('sendToMe', {
         username: user.value,
-        text: message.value
+        text: message.value,
+        socketID: socket.id
     });
 });
 
@@ -35,6 +37,14 @@ socket.on('displayMessage', (message) => {
     output.innerHTML += '<br>' + message.username + ' wrote: ' + message.text;
 });
 
+socket.on('joinMessage', (message) => {
+    output.innerHTML += '<br>' + message;
+})
+
+socket.on('leaveMessage', (message) => {
+    output.innerHTML += '<br>' + message;
+})
+
 socket.on('typing', (data) => {
     feedback.innerHTML = '<p><em>' + data + ' is typing a message...</em></p>';
 });
@@ -43,6 +53,6 @@ socket.on('showUsers', (users) => {
     console.log(users);
     displayUsers.innerHTML = "";
     users.forEach( (user) => {
-        displayUsers.innerHTML += '<br>' + user;
+        displayUsers.innerHTML += '<br>' + user.username;
     });
 });
