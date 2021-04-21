@@ -6,6 +6,7 @@ let message = document.getElementById('message');
 let btnAll = document.getElementById('sendToAll');
 let btnMe = document.getElementById('sendToMe');
 let feedback = document.getElementById('feedback');
+let displayUsers = document.getElementById('users');
 
 btnAll.addEventListener('click', function(){
     socket.emit('sendToAll', {
@@ -36,4 +37,12 @@ socket.on('displayMessage', (message) => {
 
 socket.on('typing', (data) => {
     feedback.innerHTML = '<p><em>' + data + ' is typing a message...</em></p>';
+});
+
+socket.on('showUsers', (users) => {
+    console.log(users);
+    displayUsers.innerHTML = "";
+    users.forEach( (user) => {
+        displayUsers.innerHTML += '<br>' + user;
+    });
 });
